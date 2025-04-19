@@ -1,0 +1,1289 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Maybal Voucher</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Myanmar Text', sans-serif;
+            background: linear-gradient(45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753), rgba(255, 0, 106, 0.774), rgba(247, 0, 255, 0.767));
+            background-size: 600% 600%;
+            animation: gradientBG 15s ease infinite;
+            color: #3A3A3A;
+            padding: 20px;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.692);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            color: rgba(104, 0, 241, 0.753);
+            text-shadow: 0 0 8px #ffffffa4;
+            margin-bottom: 15px;
+            margin-top: 40px;
+        }
+
+        h2 {
+            text-align: center;
+            color: rgba(104, 0, 241, 0.753);
+            text-shadow: 0 0 8px #ffffffa4;
+            margin-bottom: 10px;
+            margin-top: 60px;
+        }
+
+        .aaa {
+            text-align: center;
+            font-size: 10px;
+            color: rgba(56, 43, 43, 0.5);
+            margin-top: 5px;
+        }
+
+        #detailsForm {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        form input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: rgba(255, 255, 255, 0.7);
+            color: #3A3A3A;
+        }
+
+        #addColumnContainer {
+            position: absolute;
+            top: 246px;
+            left: 20px;
+            z-index: 10;
+        }
+
+        #addColumnBtn {
+            background: linear-gradient(45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+            color: white;
+            
+            padding: 10px 20px;
+            border-radius: 12px;
+            
+            cursor: pointer;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+            transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+            width: 120px;
+            text-align: center;
+        }
+
+        #addColumnBtn:hover {
+            background: linear-gradient(-45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+            transform: scale(1.05);
+        }
+
+        #columnOptions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 20;
+        }
+
+        .column-option {
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .column-option:hover {
+            background: rgba(104, 0, 241, 0.1);
+        }
+
+        #dynamicIsland {
+            position: absolute;
+            top: 200px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2), 0 0 15px rgba(104, 0, 241, 0.3);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transform: scale(0);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 30;
+            display: flex;
+            gap: 10px;
+        }
+
+        #dynamicIsland.visible {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .action-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 18px;
+        }
+
+        .action-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .delete-icon {
+            background: linear-gradient(45deg, rgba(255, 0, 106, 0.774), rgba(247, 0, 255, 0.767));
+        }
+
+        #voucher {
+            margin-top: 25px;
+            background: linear-gradient(45deg, #ffe6f7, #f9e4ff);
+            padding: 15px;
+            padding-top: 0px;
+            border-radius: 10px;
+        }
+
+        .voucher-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: rgba(104, 0, 241, 0.753);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            background: linear-gradient(45deg, #ffe6ff, #f5e4ff);
+        }
+
+        th {
+            background:linear-gradient(45deg,rgba(104, 0, 241, 0.753), rgba(96, 0, 223, 0.753));
+            color: white;
+        }
+
+        /* Column Width Adjustments */
+        th:nth-child(1), td.item-name {
+            width: 30%; /* Reduced width for Item Name */
+            min-width: 120px; /* Minimum width for readability */
+            white-space: normal; /* Allow text to wrap */
+            word-wrap: break-word; /* Ensure long text wraps */
+        }
+
+        th:nth-child(2), td.quantity {
+            width: 15%; /* Narrow width for Qty (3 digits) */
+            min-width: 60px; /* Enough for 3 digits */
+        }
+
+        th:nth-child(3), td.price {
+            width: 25%; /* Match Total cell size */
+            min-width: 100px;
+        }
+
+        th:nth-child(4), td.total {
+            width: 25%; /* Total cell size */
+            min-width: 100px;
+            white-space: normal; /* Allow text to wrap */
+            word-wrap: break-word; /* Ensure long text wraps */
+        }
+
+        tr:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        td input {
+            width: 100%;
+            padding: 5px;
+            border: none;
+            background: transparent;
+            text-align: center;
+            color: #3A3A3A;
+            font-size: 14px;
+        }
+
+        td input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .item-name {
+            cursor: pointer;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .item-name:hover {
+            color: rgba(104, 0, 241, 0.753);
+        }
+
+        .item-name-container {
+            position: relative;
+        }
+
+        .item-name-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 250px;
+            max-height: 250px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 40;
+            display: none;
+            font-size: 16px;
+        }
+
+        .dropdown-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(104, 0, 241, 0.1);
+        }
+
+        #grandTotal {
+            font-size: 18px;
+            text-align: center;
+            margin-top: 10px;
+            color: #3A3A3A;
+        }
+
+        #saveBtn {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 25px;
+            background: linear-gradient(45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+            color: #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+            transition: 0.3s ease;
+        }
+
+        #saveBtn:hover {
+            background: linear-gradient(-45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+            transform: scale(1.05);
+        }
+
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            z-index: 15;
+            display: none;
+        }
+
+        /* Folder System Styles */
+        #folderSystem {
+            margin: 20px 0;
+            display: none;
+        }
+
+        #folderSystem.visible {
+            display: block;
+        }
+
+        #folderControls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            gap: 10px;
+        }
+
+        #createFolderBtn, #actionFolderBtn {
+            background: linear-gradient(45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: 0.3s ease;
+        }
+
+        #createFolderBtn:hover, #actionFolderBtn:hover {
+            background: linear-gradient(-45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+            transform: scale(1.02);
+        }
+
+        #backToFoldersBtn {
+            background: linear-gradient(45deg, #666, #999);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: 0.3s ease;
+            display: none;
+        }
+
+        #backToFoldersBtn:hover {
+            background: linear-gradient(-45deg, #666, #999);
+            transform: scale(1.02);
+        }
+
+        #folderList {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .folder {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .folder:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .folder-icon {
+            font-size: 40px;
+            color: rgba(104, 0, 241, 0.753);
+            margin-bottom: 10px;
+        }
+
+        .folder-name {
+            font-weight: bold;
+            color: #3A3A3A;
+            word-break: break-word;
+        }
+
+        .folder-checkbox {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: none;
+        }
+
+        #folderList.selection-mode .folder-checkbox {
+            display: block;
+        }
+
+        #folderList.selection-mode .folder {
+            opacity: 0.7;
+        }
+
+        #folderList.selection-mode .folder.selected {
+            opacity: 1;
+            border: 2px solid rgba(104, 0, 241, 0.753);
+        }
+
+        #folderFormContainer {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2), 0 0 15px rgba(104, 0, 241, 0.3);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 35;
+            width: 300px;
+        }
+
+        #folderFormContainer.visible {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        #folderForm {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        #folderForm button[type="submit"] {
+            background: linear-gradient(45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+            color: white;
+            padding: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: 0.3s ease;
+        }
+
+        #folderForm button[type="submit"]:hover {
+            background: linear-gradient(-45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+            transform: scale(1.02);
+        }
+
+        #folderCloseFormBtn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #555;
+            font-weight: bold;
+            transition: 0.3s ease;
+        }
+
+        #folderCloseFormBtn:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        #folderActionIsland {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2), 0 0 15px rgba(104, 0, 241, 0.3);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 30;
+            display: flex;
+            gap: 10px;
+        }
+
+        #folderActionIsland.visible {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        #voucherSystem {
+            display: none;
+        }
+
+        #voucherSystem.visible {
+            display: block;
+        }
+
+        #closeVoucherSystemBtn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #555;
+            font-weight: bold;
+            transition: 0.3s ease;
+        }
+
+        #closeVoucherSystemBtn:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        /* Confirmation Dialogs */
+        #folderConfirmDialog, #itemConfirmDialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+            z-index: 35;
+            text-align: center;
+            width: 300px;
+        }
+
+        #folderConfirmDialog p, #itemConfirmDialog p {
+            color: #3A3A3A;
+            margin-bottom: 20px;
+        }
+
+        #folderConfirmDialog .dialog-buttons, #itemConfirmDialog .dialog-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        #folderConfirmDialog button, #itemConfirmDialog button {
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+        }
+
+        .confirm-btn {
+            background: linear-gradient(45deg, rgba(255, 0, 106, 0.774), rgba(247, 0, 255, 0.767));
+        }
+
+        .cancel-btn {
+            background: linear-gradient(45deg, rgba(247, 0, 255, 0.658), rgba(104, 0, 241, 0.753));
+        }
+
+        @media (max-width: 600px) {
+            table {
+                font-size: 12px;
+            }
+            #dynamicIsland, #folderFormContainer, #folderActionIsland, #folderConfirmDialog, #itemConfirmDialog {
+                width: calc(100% - 40px);
+            }
+            #folderList {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+            .item-name-dropdown {
+                width: 200px;
+            }
+            th:nth-child(1), td.item-name {
+                min-width: 100px;
+            }
+            th:nth-child(2), td.quantity {
+                min-width: 50px;
+            }
+            th:nth-child(3), td.price {
+                min-width: 80px;
+            }
+            th:nth-child(4), td.total {
+                min-width: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Voucher Generator</h1><br><br>
+        <div id="overlay"></div>
+        <!-- Folder System -->
+        <div id="folderSystem" class="visible">
+            <div id="folderControls">
+                <button id="createFolderBtn">Create folder</button>
+                <button id="actionFolderBtn">Actions</button>
+                <button id="backToFoldersBtn" style="display: none;">Back to Folders</button>
+            </div>
+            <div id="folderList"></div>
+        </div>
+        
+        <!-- Folder Form -->
+        <div id="folderFormContainer">
+            <form id="folderForm">
+                <input type="text" id="folderName" placeholder="Folder Name" required>
+                <button type="submit" id="folderFormSubmitBtn">Create</button>
+            </form>
+            
+        </div>
+        <!-- Folder Action Island -->
+        <div id="folderActionIsland">
+            <div class="action-icon edit-icon" id="folderIslandEditBtn" title="Edit">🖋️</div>
+            <div class="action-icon delete-icon" id="folderIslandDeleteBtn" title="Delete">🗑️</div>
+        </div>
+        <!-- Folder Deletion Confirmation Dialog -->
+        <div id="folderConfirmDialog">
+            <p>Are you sure you want to delete?</p>
+            <div class="dialog-buttons">
+                <button id="confirmFolderDelete" class="confirm-btn">Delete</button>
+                <button id="cancelFolderDelete" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+
+        
+        <!-- Voucher System -->
+        <div id="voucherSystem">
+            <button id="closeVoucherSystemBtn">×</button>
+            <form id="detailsForm">
+                <input type="text" id="recipientName" placeholder="Recipient's Name" required>
+                <input type="date" id="voucherDate" required>
+            </form>
+            <div id="addColumnContainer">
+                <button id="addColumnBtn">Columns</button>
+                <div id="columnOptions">
+                    <div class="column-option" data-columns="5">5 Columns</div>
+                    <div class="column-option" data-columns="10">10 Columns</div>
+                    <div class="column-option" data-columns="15">15 Columns</div>
+                    <div class="column-option" data-columns="20">20 Columns</div>
+                    <div class="column-option" data-columns="25">25 Columns</div>
+                </div>
+            </div>
+            <div id="dynamicIsland">
+                <div class="action-icon delete-icon" id="islandDeleteBtn" title="Delete">🗑️</div>
+            </div>
+            <div id="voucher">
+                <h2>Maybal</h2>
+                <div class="voucher-header">
+                    <p id="displayRecipientName"></p>
+                    <p id="displayVoucherDate"></p>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table id="voucherTable">
+                        <thead>
+                            <tr>
+                                <th>Item Name</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <h3 id="grandTotal">Grand Total: 0 ကျပ်</h3>
+                <div class="aaa">©️Aung Kaung Myat production</div>
+            </div>
+            <button id="saveBtn">Save Voucher</button>
+        </div>
+        <!-- Item Deletion Confirmation Dialog -->
+        <div id="itemConfirmDialog">
+            <p>Are you sure you want to delete?</p>
+            <div class="dialog-buttons">
+                <button id="confirmItemDelete" class="confirm-btn">Delete</button>
+                <button id="cancelItemDelete" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        // DOM Elements
+        const addColumnBtn = document.getElementById('addColumnBtn');
+        const columnOptions = document.getElementById('columnOptions');
+        const overlay = document.getElementById('overlay');
+        const dynamicIsland = document.getElementById('dynamicIsland');
+        const islandDeleteBtn = document.getElementById('islandDeleteBtn');
+        const recipientNameInput = document.getElementById('recipientName');
+        const voucherDateInput = document.getElementById('voucherDate');
+        const saveBtn = document.getElementById('saveBtn');
+        const folderSystem = document.getElementById('folderSystem');
+        const voucherSystem = document.getElementById('voucherSystem');
+        const createFolderBtn = document.getElementById('createFolderBtn');
+        const actionFolderBtn = document.getElementById('actionFolderBtn');
+        const backToFoldersBtn = document.getElementById('backToFoldersBtn');
+        const folderList = document.getElementById('folderList');
+        const folderFormContainer = document.getElementById('folderFormContainer');
+        const folderForm = document.getElementById('folderForm');
+        const folderCloseFormBtn = document.getElementById('folderCloseFormBtn');
+        const folderFormSubmitBtn = document.getElementById('folderFormSubmitBtn');
+        const folderActionIsland = document.getElementById('folderActionIsland');
+        const folderIslandEditBtn = document.getElementById('folderIslandEditBtn');
+        const folderIslandDeleteBtn = document.getElementById('folderIslandDeleteBtn');
+        const closeVoucherSystemBtn = document.getElementById('closeVoucherSystemBtn');
+        const folderConfirmDialog = document.getElementById('folderConfirmDialog');
+        const confirmFolderDelete = document.getElementById('confirmFolderDelete');
+        const cancelFolderDelete = document.getElementById('cancelFolderDelete');
+        const itemConfirmDialog = document.getElementById('itemConfirmDialog');
+        const confirmItemDelete = document.getElementById('confirmItemDelete');
+        const cancelItemDelete = document.getElementById('cancelItemDelete');
+
+        let selectedRow = null;
+        let editIndex = null;
+        let selectedFolder = null;
+        let editFolderIndex = null;
+        let currentFolderId = null;
+        let isSelectionMode = false;
+        let selectedFolders = [];
+
+        // Predefined item names
+        const predefinedItems = [
+            "ကော်ပိတ်",
+            "ကချင်one set",
+            "ဇာone set",
+            "ပါတိတ်one set",
+            "စီးကွင့်",
+            "Hand Made",
+            "ချိတ်ထမီ",
+            "ပတ်ထမီ",
+            "No Bra",
+            "ဂါဝန်",
+            "နှစ်ထပ်ချုပ်",
+            "ရင်ဖုန်း",
+            "နောက်ဇစ်"
+        ];
+
+        // Initialize
+        loadFolders();
+
+        // Folder System Functions
+        function loadFolders() {
+            const folders = JSON.parse(localStorage.getItem('folders')) || [];
+            folderList.innerHTML = '';
+
+            if (folders.length === 0) {
+                folderList.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666;">No folders created yet</p>';
+            } else {
+                folders.forEach((folder, index) => {
+                    const folderElement = document.createElement('div');
+                    folderElement.className = 'folder';
+                    folderElement.dataset.folderId = folder.id;
+                    folderElement.innerHTML = `
+                        <input type="checkbox" class="folder-checkbox" data-folder-id="${folder.id}">
+                        <div class="folder-icon">📁</div>
+                        <div class="folder-name">${folder.name}</div>
+                    `;
+                    folderElement.addEventListener('click', (e) => {
+                        if (isSelectionMode) {
+                            e.preventDefault();
+                            const checkbox = folderElement.querySelector('.folder-checkbox');
+                            checkbox.checked = !checkbox.checked;
+                            toggleFolderSelection(folder.id, index);
+                        } else {
+                            openFolder(folder.id);
+                        }
+                    });
+                    folderList.appendChild(folderElement);
+                });
+            }
+        }
+
+        function toggleSelectionMode() {
+            isSelectionMode = !isSelectionMode;
+            selectedFolders = [];
+            folderList.classList.toggle('selection-mode', isSelectionMode);
+            actionFolderBtn.textContent = isSelectionMode ? 'Done' : 'Actions';
+            
+            const checkboxes = document.querySelectorAll('.folder-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+
+            if (!isSelectionMode) {
+                hideFolderActionIsland();
+            }
+        }
+
+        function toggleFolderSelection(folderId, index) {
+            const folderElement = document.querySelector(`.folder[data-folder-id="${folderId}"]`);
+            const isSelected = selectedFolders.some(f => f.id === folderId);
+
+            if (isSelected) {
+                selectedFolders = selectedFolders.filter(f => f.id !== folderId);
+                folderElement.classList.remove('selected');
+            } else {
+                const folders = JSON.parse(localStorage.getItem('folders')) || [];
+                selectedFolders.push({ id: folderId, index, name: folders[index].name });
+                folderElement.classList.add('selected');
+            }
+
+            if (selectedFolders.length > 0) {
+                showFolderActionIsland();
+            } else {
+                hideFolderActionIsland();
+            }
+        }
+
+        function openFolder(folderId) {
+            currentFolderId = folderId;
+            folderSystem.classList.remove('visible');
+            voucherSystem.classList.add('visible');
+            backToFoldersBtn.style.display = 'block';
+            loadVoucherData(folderId);
+        }
+
+        function closeFolder() {
+            currentFolderId = null;
+            folderSystem.classList.add('visible');
+            voucherSystem.classList.remove('visible');
+            backToFoldersBtn.style.display = 'none';
+            saveVoucherData();
+            if (isSelectionMode) {
+                toggleSelectionMode();
+            }
+        }
+
+        function showFolderForm(isEdit = false, folder = null) {
+            folderFormContainer.classList.add('visible');
+            overlay.style.display = 'block';
+            folderFormSubmitBtn.textContent = isEdit ? 'Update Folder' : 'Create Folder';
+            
+            if (isEdit && folder) {
+                document.getElementById('folderName').value = folder.name;
+            } else {
+                document.getElementById('folderName').value = '';
+            }
+        }
+
+        function closeFolderForm() {
+            folderFormContainer.classList.remove('visible');
+            overlay.style.display = 'none';
+            folderForm.reset();
+            editFolderIndex = null;
+            hideFolderActionIsland();
+        }
+
+        function showFolderActionIsland() {
+            folderActionIsland.classList.add('visible');
+            overlay.style.display = 'block';
+        }
+
+        function hideFolderActionIsland() {
+            folderActionIsland.classList.remove('visible');
+            overlay.style.display = 'none';
+            selectedFolders = [];
+            const folders = document.querySelectorAll('.folder');
+            folders.forEach(folder => folder.classList.remove('selected'));
+            const checkboxes = document.querySelectorAll('.folder-checkbox');
+            checkboxes.forEach(checkbox => checkbox.checked = false);
+        }
+
+        // Folder Form Submission
+        folderForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const name = document.getElementById('folderName').value.trim();
+            const folders = JSON.parse(localStorage.getItem('folders')) || [];
+
+            if (name === '') {
+                alert('Folder name cannot be empty');
+                return;
+            }
+
+            if (folders.some(f => f.name === name && f.id !== (editFolderIndex !== null ? folders[editFolderIndex].id : null))) {
+                alert('Folder name already exists');
+                return;
+            }
+
+            if (editFolderIndex !== null) {
+                folders[editFolderIndex].name = name;
+            } else {
+                const newFolder = {
+                    id: Date.now().toString(),
+                    name: name,
+                    voucherData: {
+                        recipientName: '',
+                        voucherDate: '',
+                        items: []
+                    }
+                };
+                folders.push(newFolder);
+            }
+
+            localStorage.setItem('folders', JSON.stringify(folders));
+            closeFolderForm();
+            loadFolders();
+            if (isSelectionMode) {
+                toggleSelectionMode();
+            }
+        });
+
+        // Folder Action Island Actions
+        folderIslandEditBtn.addEventListener('click', () => {
+            if (selectedFolders.length === 1) {
+                editFolderIndex = selectedFolders[0].index;
+                showFolderForm(true, { name: selectedFolders[0].name });
+                toggleSelectionMode();
+            } else {
+                alert('Please select exactly one folder to edit.');
+            }
+        });
+
+        folderIslandDeleteBtn.addEventListener('click', () => {
+            if (selectedFolders.length > 0) {
+                folderConfirmDialog.style.display = 'block';
+                overlay.style.display = 'block';
+            } else {
+                alert('Please select at least one folder to delete.');
+            }
+        });
+
+        confirmFolderDelete.addEventListener('click', () => {
+            if (selectedFolders.length > 0) {
+                let folders = JSON.parse(localStorage.getItem('folders')) || [];
+                selectedFolders.forEach(folder => {
+                    folders = folders.filter(f => f.id !== folder.id);
+                });
+                localStorage.setItem('folders', JSON.stringify(folders));
+                hideFolderActionIsland();
+                loadFolders();
+                folderConfirmDialog.style.display = 'none';
+                overlay.style.display = 'none';
+                if (isSelectionMode) {
+                    toggleSelectionMode();
+                }
+            }
+        });
+
+        cancelFolderDelete.addEventListener('click', () => {
+            folderConfirmDialog.style.display = 'none';
+            overlay.style.display = 'none';
+        });
+
+        // Action Folder Button
+        actionFolderBtn.addEventListener('click', toggleSelectionMode);
+
+        // Create folder button
+        createFolderBtn.addEventListener('click', () => showFolderForm());
+
+        // Back to folders button
+        backToFoldersBtn.addEventListener('click', closeFolder);
+
+        // Close voucher system button
+        closeVoucherSystemBtn.addEventListener('click', closeFolder);
+
+        // Overlay click handler
+        overlay.addEventListener('click', () => {
+            hideDynamicIsland();
+            closeFolderForm();
+            hideFolderActionIsland();
+            folderConfirmDialog.style.display = 'none';
+            itemConfirmDialog.style.display = 'none';
+            columnOptions.style.display = 'none';
+            document.querySelectorAll('.item-name-dropdown').forEach(dropdown => {
+                dropdown.style.display = 'none';
+            });
+            if (isSelectionMode) {
+                toggleSelectionMode();
+            }
+        });
+
+        // Voucher System Functions
+        function loadVoucherData(folderId) {
+            const folders = JSON.parse(localStorage.getItem('folders')) || [];
+            const folder = folders.find(f => f.id === folderId);
+            
+            if (!folder) return;
+            
+            const voucherData = folder.voucherData || {
+                recipientName: '',
+                voucherDate: '',
+                items: []
+            };
+            
+            recipientNameInput.value = voucherData.recipientName;
+            voucherDateInput.value = voucherData.voucherDate;
+            document.getElementById('displayRecipientName').textContent = voucherData.recipientName;
+            document.getElementById('displayVoucherDate').textContent = voucherData.voucherDate;
+            
+            document.querySelector('#voucherTable tbody').innerHTML = '';
+            
+            voucherData.items.forEach(item => addItemToTable(item.name, item.quantity, item.price));
+            updateGrandTotal();
+        }
+
+        function saveVoucherData() {
+            if (!currentFolderId) return;
+            
+            const items = [];
+            document.querySelectorAll('#voucherTable tbody tr').forEach(row => {
+                const name = row.querySelector('.item-name input').value;
+                const quantity = parseInt(row.querySelector('.quantity input').value) || 0;
+                const price = parseFloat(row.querySelector('.price input').value) || 0;
+                if (name || quantity || price) {
+                    items.push({ name, quantity, price });
+                }
+            });
+            
+            const voucherData = {
+                recipientName: recipientNameInput.value,
+                voucherDate: voucherDateInput.value,
+                items
+            };
+            
+            const folders = JSON.parse(localStorage.getItem('folders')) || [];
+            const folderIndex = folders.findIndex(f => f.id === currentFolderId);
+            
+            if (folderIndex !== -1) {
+                folders[folderIndex].voucherData = voucherData;
+                localStorage.setItem('folders', JSON.stringify(folders));
+            }
+        }
+
+        // Initialize Dropdown for Item Name
+        function initDropdown(row) {
+            const dropdown = row.querySelector('.item-name-dropdown');
+            dropdown.innerHTML = '';
+            predefinedItems.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'dropdown-item';
+                div.textContent = item;
+                div.addEventListener('click', () => {
+                    row.querySelector('.item-name input').value = item;
+                    dropdown.style.display = 'none';
+                    updateRowTotal(row);
+                    updateGrandTotal();
+                    saveVoucherData();
+                });
+                dropdown.appendChild(div);
+            });
+        }
+
+        // Show/Hide Column Options
+        addColumnBtn.addEventListener('click', () => {
+            columnOptions.style.display = columnOptions.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Add Columns
+        columnOptions.querySelectorAll('.column-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const numColumns = parseInt(option.dataset.columns);
+                addColumnsToTable(numColumns);
+                columnOptions.style.display = 'none';
+                saveVoucherData();
+            });
+        });
+
+        // Add Columns to Table
+        function addColumnsToTable(numColumns) {
+            const tableBody = document.querySelector('#voucherTable tbody');
+            const currentRows = tableBody.querySelectorAll('tr').length;
+            const rowsToAdd = numColumns - currentRows;
+
+            if (rowsToAdd > 0) {
+                for (let i = 0; i < rowsToAdd; i++) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="item-name">
+                            <div class="item-name-container">
+                                <input type="text" placeholder="Item Name">
+                                <div class="item-name-dropdown"></div>
+                            </div>
+                        </td>
+                        <td class="quantity"><input type="number" placeholder="Qty" min="0"></td>
+                        <td class="price"><input type="number" placeholder="Price" min="0"></td>
+                        <td class="total">0 ကျပ်</td>
+                    `;
+                    tableBody.appendChild(row);
+                    initDropdown(row);
+                    attachInputListeners(row);
+                    row.querySelector('.item-name').addEventListener('click', () => {
+                        const rows = Array.from(document.querySelectorAll('#voucherTable tbody tr'));
+                        showDynamicIsland(row, rows.indexOf(row));
+                    });
+                }
+            }
+            updateGrandTotal();
+        }
+
+        // Attach Input Listeners for Table Inputs
+        function attachInputListeners(row) {
+            const itemNameInput = row.querySelector('.item-name input');
+            const dropdown = row.querySelector('.item-name-dropdown');
+            const inputs = row.querySelectorAll('input');
+
+            itemNameInput.addEventListener('focus', () => {
+                initDropdown(row);
+                dropdown.style.display = 'block';
+            });
+
+            itemNameInput.addEventListener('input', () => {
+                const searchTerm = itemNameInput.value.toLowerCase();
+                const items = dropdown.querySelectorAll('.dropdown-item');
+                items.forEach(item => {
+                    if (item.textContent.toLowerCase().includes(searchTerm)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                updateRowTotal(row);
+                updateGrandTotal();
+                saveVoucherData();
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!row.contains(e.target)) {
+                    dropdown.style.display = 'none';
+                }
+            });
+
+            inputs.forEach(input => {
+                if (input !== itemNameInput) {
+                    input.addEventListener('input', () => {
+                        updateRowTotal(row);
+                        updateGrandTotal();
+                        saveVoucherData();
+                    });
+                }
+            });
+        }
+
+        // Update Row Total
+        function updateRowTotal(row) {
+            const quantity = parseInt(row.querySelector('.quantity input').value) || 0;
+            const price = parseFloat(row.querySelector('.price input').value) || 0;
+            const total = (quantity * price).toFixed(0);
+            row.querySelector('.total').textContent = `${total} ကျပ်`;
+        }
+
+        // Add Item to Table (for loading existing data)
+        function addItemToTable(name, quantity, price) {
+            const tableBody = document.querySelector('#voucherTable tbody');
+            const row = document.createElement('tr');
+            const total = (quantity * price).toFixed(0);
+            row.innerHTML = `
+                <td class="item-name">
+                    <div class="item-name-container">
+                        <input type="text" value="${name}" placeholder="Item Name">
+                        <div class="item-name-dropdown"></div>
+                    </div>
+                </td>
+                <td class="quantity"><input type="number" value="${quantity}" placeholder="Qty" min="0"></td>
+                <td class="price"><input type="number" value="${price}" placeholder="Price" min="0"></td>
+                <td class="total">${total} ကျပ်</td>
+            `;
+            tableBody.appendChild(row);
+            initDropdown(row);
+            attachInputListeners(row);
+            row.querySelector('.item-name').addEventListener('click', () => {
+                const rows = Array.from(document.querySelectorAll('#voucherTable tbody tr'));
+                showDynamicIsland(row, rows.indexOf(row));
+            });
+        }
+
+        // Update Grand Total
+        function updateGrandTotal() {
+            const rows = document.querySelectorAll('#voucherTable tbody tr');
+            let grandTotal = 0;
+            rows.forEach(row => {
+                const total = parseFloat(row.querySelector('.total').textContent.replace(' ကျပ်', '')) || 0;
+                grandTotal += total;
+            });
+            document.getElementById('grandTotal').textContent = `Grand Total: ${grandTotal.toFixed(0)} ကျပ်`;
+            saveVoucherData();
+        }
+
+        // Show/Hide Dynamic Island
+        function showDynamicIsland(row, index) {
+            selectedRow = row;
+            editIndex = index;
+            dynamicIsland.classList.add('visible');
+            overlay.style.display = 'block';
+            addColumnBtn.style.opacity = '0';
+            setTimeout(() => addColumnBtn.style.display = 'none', 400);
+        }
+
+        function hideDynamicIsland() {
+            dynamicIsland.classList.remove('visible');
+            overlay.style.display = 'none';
+            addColumnBtn.style.display = 'block';
+            setTimeout(() => addColumnBtn.style.opacity = '1', 50);
+            selectedRow = null;
+            editIndex = null;
+        }
+
+        // Dynamic Island Actions
+        islandDeleteBtn.addEventListener('click', () => {
+            itemConfirmDialog.style.display = 'block';
+            overlay.style.display = 'block';
+        });
+
+        confirmItemDelete.addEventListener('click', () => {
+            if (selectedRow) {
+                selectedRow.remove();
+                updateGrandTotal();
+                hideDynamicIsland();
+                itemConfirmDialog.style.display = 'none';
+                overlay.style.display = 'none';
+                saveVoucherData();
+            }
+        });
+
+        cancelItemDelete.addEventListener('click', () => {
+            itemConfirmDialog.style.display = 'none';
+            overlay.style.display = 'none';
+        });
+
+        // Details Form
+        document.getElementById('detailsForm').addEventListener('input', () => {
+            document.getElementById('displayRecipientName').textContent = recipientNameInput.value;
+            document.getElementById('displayVoucherDate').textContent = voucherDateInput.value;
+            saveVoucherData();
+        });
+
+        // Save Voucher as Image
+        saveBtn.addEventListener('click', () => {
+            const voucher = document.getElementById('voucher');
+            html2canvas(voucher, { 
+                useCORS: true, 
+                scale: window.devicePixelRatio || 2,
+                backgroundColor: '#ffe6f7' // Fallback for gradient
+            }).then(canvas => {
+                canvas.toBlob(blob => {
+                    const link = document.createElement('a');
+                    link.download = `voucher_${recipientNameInput.value || 'unnamed'}_${new Date().toISOString().split('T')[0]}.jpg`;
+                    link.href = URL.createObjectURL(blob);
+                    link.click();
+                    URL.revokeObjectURL(link.href);
+                }, 'image/jpeg', 0.95);
+            }).catch(error => {
+                alert('Voucher ကို capture လုပ်မရပါ - ' + error);
+            });
+        });
+    </script>
+
+</body></html>
